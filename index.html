@@ -6,8 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <!-- Firebase SDK (non-module compat version) -->
   <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-database-compat.js"></script>
+
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
     body{font-family:'Outfit',sans-serif;background:linear-gradient(270deg,#0f0f1d,#1d1d2c,#0f0f1d);background-size:600% 600%;animation:bgLoop 15s ease infinite;min-height:100vh;color:#f9f9f9;display:flex;justify-content:center;align-items:center;position:relative;overflow-x:hidden;}
@@ -29,31 +32,18 @@
     .code-box{background:#1e1e2f;color:#00ffbf;padding:1rem;font-family:monospace;border-radius:10px;font-size:0.85rem;word-break:break-all;border:1px solid rgba(255,255,255,0.1);margin-bottom:1rem;text-align:left;}
     footer{position:fixed;bottom:10px;width:100%;text-align:center;font-size:0.85rem;color:#888;z-index:10;background:transparent;}
     #toast{position:fixed;bottom:70px;right:20px;background:rgba(0,0,0,0.85);padding:1rem 1.5rem;border-radius:12px;color:#fff;font-weight:500;opacity:0;transition:opacity .4s ease;pointer-events:none;z-index:9999;}
-    #music-toggle {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      z-index: 9999;
-      padding: 8px 12px;
-      background: rgba(255,255,255,0.1);
-      color: #fff;
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 8px;
-      font-size: 14px;
-      cursor: pointer;
-      backdrop-filter: blur(5px);
-      display: none;
-    }
     @media(max-width:480px){.card{padding:1.2rem;border-radius:16px;}h1,h2{font-size:1.4rem;}.button{font-size:0.9rem;padding:0.8rem 1.2rem;}.code-box{font-size:0.8rem;}}
   </style>
 </head>
 <body>
 
+  <!-- Toast -->
   <div id="toast">Script Copied! ✅</div>
 
+  <!-- Welcome -->
   <div id="welcome-screen" class="section active">
     <div class="card">
-      <img src="https://cdn.discordapp.com/attachments/1378813571353415872/1387885696949288992/Untitled117_20250610170526.png" class="logo">
+      <img src="https://cdn.discordapp.com/attachments/1378813571353415872/1387885696949288992/Untitled117_20250610170526.png?ex=685fa187&is=685e5007&hm=51da94444a4742fc92be6766537037ca32c74055b1974f4a0f05048776c8d843&" class="logo">
       <h1>👑 XZuyaX's HUB</h1>
       <p>Make your life more enjoyable🤫</p>
       <p style="font-size:0.85rem;color:#6ef6ff;">✔ Trusted by 5,000+ Users</p>
@@ -61,6 +51,7 @@
     </div>
   </div>
 
+  <!-- List -->
   <div id="scripts-screen" class="section">
     <div class="card">
       <h2>Scripts List</h2>
@@ -70,6 +61,7 @@
     </div>
   </div>
 
+  <!-- Detail -->
   <div id="script-detail-screen" class="section">
     <div class="card">
       <h1 id="script-name"></h1>
@@ -79,23 +71,19 @@
       <a href="#" id="openRawBtn" class="button" target="_blank">🔑GET KEY</a>
       <button class="button" id="copyBtn">Copy Loadstring</button>
       <button class="button" id="backBtn">◀️ Back</button>
-      <p style="margin-top:1rem;">Created by <a href="https://discord.gg/ZUYA" class="footer-link"><i class="ph-discord-logo"></i> Zuya</a></p>
+            <p style="margin-top:1rem;">Created by <a href="https://discord.gg/ZUYA" class="footer-link"><i class="ph-discord-logo"></i> Zuya</a></p>
     </div>
   </div>
 
+  <!-- Footer -->
   <footer>&copy; 2025 <b>XZuyaX HUB</b> — All rights reserved.
-    <br><small id="visitor-count" style="color:#777;">Loading visitors...</small>
-  </footer>
-
-  <!-- Audio & Button -->
-  <audio id="bg-music" loop autoplay>
-    <source src="https://cdn.discordapp.com/attachments/1378813571353415872/1388458426012149780/xzuyamusic.mp3" type="audio/mpeg">
-  </audio>
-
-  <button id="music-toggle">🔊 Music</button>
+A project by Zuya
+  <br>
+  <small id="visitor-count" style="color:#777;">Loading visitors...</small>
+</footer>
 
   <script>
-    // Firebase
+    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyCGQHhduCRnQ41AH7k_jH33379WYe-9Dlc",
       authDomain: "xzuyaxhub-734e2.firebaseapp.com",
@@ -106,16 +94,12 @@
       appId: "1:75397705433:web:6c5be25cee1eccd72058c8",
       measurementId: "G-8CXETQT94X"
     };
+
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const copyCountRef = db.ref('copyCounts/blueLockRivals');
-    const visitRef = db.ref("visits/total");
 
-    visitRef.transaction(current => (current || 0) + 1);
-    visitRef.on("value", snap => {
-      document.getElementById("visitor-count").textContent = ` ${snap.val()} visitors`;
-    });
-
+    // DOM
     const sec = {
       w: document.getElementById('welcome-screen'),
       l: document.getElementById('scripts-screen'),
@@ -131,30 +115,43 @@
     const enterBtn = document.getElementById('enterBtn');
     const toast = document.getElementById('toast');
 
-    const music = document.getElementById("bg-music");
-    const toggleBtn = document.getElementById("music-toggle");
-    toggleBtn.style.display = "none";
-
-    toggleBtn.onclick = () => {
-      music.muted = !music.muted;
-      toggleBtn.textContent = music.muted ? "🔇 Music" : "🔊 Music";
+    const scripts = {
+      'blue-lock': {
+        name: 'Blue Lock: Rivals',
+        desc: 'Auto Goal,Controll Ball, Inf Stamina,and More features. Optimized for Blue Lock Rivals.',
+        code: 'loadstring(game:HttpGet("https://raw.githubusercontent.com/XZuuyaX/XZuyaX-s-Hub/main/Main.Lua"))()',
+        raw: 'https://lootdest.org/s?eMHiYTAw&data=0jtpGgMIjVpRo/RXH4LKUGS3lnbGkJUxNWFd2mVmHxg%3D'
+      }
     };
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.style.opacity = 1;
+      setTimeout(() => toast.style.opacity = 0, 2500);
+    }
+
+    // Realtime Counter Update
+    copyCountRef.on('value', snap => {
+      const v = snap.val() || 0;
+      cInfo.textContent = `This script has been copied ${v} times`;
+    });
 
     enterBtn.onclick = () => {
-      sec.w.classList.remove('active');
-      sec.l.classList.add('active');
-      music.play().catch(()=>{});
-      toggleBtn.style.display = "block";
-    };
+  // Tampilin halaman list
+  sec.w.classList.remove('active');
+  sec.l.classList.add('active');
+
+  // Putar musik
+  const music = document.getElementById('bg-music');
+  music.play().catch(err => {
+    console.warn("Autoplay failed:", err);
+  });
+};
 
     document.querySelectorAll('.script-item').forEach(el => {
       el.onclick = () => {
-        const s = {
-          name: 'Blue Lock: Rivals',
-          desc: 'Auto Goal,Controll Ball, Inf Stamina,and More features. Optimized for Blue Lock Rivals.',
-          code: 'loadstring(game:HttpGet("https://raw.githubusercontent.com/XZuuyaX/XZuyaX-s-Hub/main/Main.Lua"))()',
-          raw: 'https://lootdest.org/s?eMHiYTAw&data=0jtpGgMIjVpRo/RXH4LKUGS3lnbGkJUxNWFd2mVmHxg%3D'
-        };
+        const id = el.dataset.script;
+        const s = scripts[id];
         sName.textContent = s.name;
         sDesc.textContent = s.desc;
         sCode.textContent = s.code;
@@ -164,22 +161,28 @@
       };
     });
 
-    copyCountRef.on('value', snap => {
-      cInfo.textContent = `This script has been copied ${snap.val() || 0} times`;
-    });
-
     copyBtn.onclick = async () => {
       await navigator.clipboard.writeText(sCode.textContent);
       copyCountRef.transaction(n => (n || 0) + 1);
-      toast.textContent = 'Script Copied! ✅';
-      toast.style.opacity = 1;
-      setTimeout(() => toast.style.opacity = 0, 2500);
+      showToast('Script Copied! ✅');
     };
 
     backBtn.onclick = () => {
       sec.d.classList.remove('active');
       sec.l.classList.add('active');
     };
+    // --- Visitor Counter ---
+const visitRef = db.ref("visits/total");
+
+visitRef.transaction(current => (current || 0) + 1); // +1 saat halaman dibuka
+
+visitRef.on("value", snap => {
+  document.getElementById("visitor-count").textContent = ` ${snap.val()} visitors`;
+});
   </script>
+  <audio id="bg-music" autoplay loop>
+  <source src="https://cdn.discordapp.com/attachments/1378813571353415872/1388268770795061278/TOP_10_VIRAL_AURA_PHONK_SONGS_BRAZILIAN_PHONK_MIX_2025_AGGRESSIVE_BRAZILIAN_PHONK_MIX.mp3?ex=68605d8b&is=685f0c0b&hm=d3b71b53ffd1b7ab57eb6a0658448469a68231ecc91eeec23308aef4da9e80a2&" type="audio/mpeg">
+  Your browser does not support audio.
+  </audio>
 </body>
 </html>
