@@ -161,6 +161,17 @@ A project by Zuya</footer>
       sec.d.classList.remove('active');
       sec.l.classList.add('active');
     };
+    // --- Visitor Counter ---
+const visitRef = db.ref("visits/total");
+
+visitRef.transaction(current => (current || 0) + 1); // +1 saat halaman dibuka
+
+visitRef.on("value", snap => {
+  document.getElementById("visitor-count").textContent = `👁️ ${snap.val()} visitors`;
+});
   </script>
+  <small id="visitor-count" style="margin-top:1rem; color:#888; font-size:0.9rem;">
+  Loading visitor count...
+  </small>
 </body>
 </html>
