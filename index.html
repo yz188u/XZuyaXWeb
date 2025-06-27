@@ -35,6 +35,22 @@
     @media(max-width:480px){.card{padding:1.2rem;border-radius:16px;}h1,h2{font-size:1.4rem;}.button{font-size:0.9rem;padding:0.8rem 1.2rem;}.code-box{font-size:0.8rem;}}
   </style>
 </head>
+  <button id="music-toggle" style="
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 9999;
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  backdrop-filter: blur(5px);
+">
+🔊 Music
+  </button>
 <body>
 
   <!-- Toast -->
@@ -136,10 +152,15 @@ A project by Zuya
       cInfo.textContent = `This script has been copied ${v} times`;
     });
 
-    enterBtn.onclick = () => {
-  // Tampilin halaman list
+toggleBtn.style.display = "none"; // Sembunyikan dulu
+
+enterBtn.onclick = () => {
   sec.w.classList.remove('active');
   sec.l.classList.add('active');
+  music.play().catch(()=>{});
+  toggleBtn.style.display = "block"; // Munculkan tombol setelah masuk
+};
+  
 
   // Putar musik
   const music = document.getElementById('bg-music');
@@ -171,6 +192,13 @@ A project by Zuya
       sec.d.classList.remove('active');
       sec.l.classList.add('active');
     };
+    const music = document.getElementById("bg-music");
+  const toggleBtn = document.getElementById("music-toggle");
+
+  toggleBtn.onclick = () => {
+    music.muted = !music.muted;
+    toggleBtn.textContent = music.muted ? "🔇 Music" : "🔊 Music";
+  };
     // --- Visitor Counter ---
 const visitRef = db.ref("visits/total");
 
