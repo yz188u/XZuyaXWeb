@@ -137,9 +137,16 @@ A project by Zuya
     });
 
     enterBtn.onclick = () => {
-      sec.w.classList.remove('active');
-      sec.l.classList.add('active');
-    };
+  // Tampilin halaman list
+  sec.w.classList.remove('active');
+  sec.l.classList.add('active');
+
+  // Putar musik
+  const music = document.getElementById('bg-music');
+  music.play().catch(err => {
+    console.warn("Autoplay failed:", err);
+  });
+};
 
     document.querySelectorAll('.script-item').forEach(el => {
       el.onclick = () => {
@@ -173,5 +180,9 @@ visitRef.on("value", snap => {
   document.getElementById("visitor-count").textContent = ` ${snap.val()} visitors`;
 });
   </script>
+  <audio id="bg-music" autoplay loop>
+  <source src="https://cdn.discordapp.com/attachments/1378813571353415872/1388268770795061278/TOP_10_VIRAL_AURA_PHONK_SONGS_BRAZILIAN_PHONK_MIX_2025_AGGRESSIVE_BRAZILIAN_PHONK_MIX.mp3?ex=68605d8b&is=685f0c0b&hm=d3b71b53ffd1b7ab57eb6a0658448469a68231ecc91eeec23308aef4da9e80a2&" type="audio/mpeg">
+  Your browser does not support audio.
+  </audio>
 </body>
 </html>
